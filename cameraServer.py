@@ -4,16 +4,16 @@ import time
 import socket
 from urllib.request import urlopen
 import os
-import RPi.GPIO as GPIO
+#import RPi.GPIO as GPIO
 import signal
 import select
 from datetime import datetime
 import requests
 
-GPIO.cleanup()
-GPIO.setmode(GPIO.BCM)
-GPIO.setup(18, GPIO.OUT)
-GPIO.setup(23, GPIO.OUT)
+#GPIO.cleanup()
+#GPIO.setmode(GPIO.BCM)
+#GPIO.setup(18, GPIO.OUT)
+#GPIO.setup(23, GPIO.OUT)
 
 with open('/etc/hostname', 'r') as file:
     hostname = file.read().strip()
@@ -172,7 +172,7 @@ def main():
             
             if processes:
                 libcamera_process, ffmpeg_process = processes
-                GPIO.output(18, GPIO.HIGH)
+                #GPIO.output(18, GPIO.HIGH)
                 stream_start_time = time.time()
                 log_message("Stream started")
                 
@@ -189,7 +189,7 @@ def main():
                         log_message(f"libcamera process exited with status: {libcamera_status}")
                         error_output = libcamera_process.stderr.read().decode()
                         log_message(f"libcamera final output: {error_output}")
-                        GPIO.output(18, GPIO.LOW)
+                        #GPIO.output(18, GPIO.LOW)
                         kill_camera_processes()
                         break
                         
@@ -197,7 +197,7 @@ def main():
                         log_message(f"ffmpeg process exited with status: {ffmpeg_status}")
                         error_output = ffmpeg_process.stderr.read().decode()
                         log_message(f"ffmpeg final output: {error_output}")
-                        GPIO.output(18, GPIO.LOW)
+                        #GPIO.output(18, GPIO.LOW)
                         kill_camera_processes()
                         break
                     
@@ -205,13 +205,13 @@ def main():
                     if monitor_process_output(libcamera_process, "libcamera") or \
                        monitor_process_output(ffmpeg_process, "ffmpeg"):
                         log_message("Error detected in process output")
-                        GPIO.output(18, GPIO.LOW)
+                        #GPIO.output(18, GPIO.LOW)
                         kill_camera_processes()
                         break
                     
                     if not check_internet():
                         log_message("Internet connection lost")
-                        GPIO.output(18, GPIO.LOW)
+                        #GPIO.output(18, GPIO.LOW)
                         kill_camera_processes()
                         break
                     
@@ -223,7 +223,7 @@ def main():
         log_message(f"Exited with: {e}")
     finally:
         kill_camera_processes()
-        GPIO.cleanup()
+        #GPIO.cleanup()
 
 if __name__ == "__main__":
     try:
@@ -231,5 +231,5 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         log_message("\nReceived keyboard interrupt, shutting down...")
     finally:
-        GPIO.cleanup()
+        #GPIO.cleanup()
         log_message("Process exited")
